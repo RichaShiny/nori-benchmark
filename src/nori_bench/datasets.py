@@ -55,7 +55,28 @@ def _load_concrete():
     return df.drop(columns=["strength"]), df["strength"]
 
 
+def _load_airfoil():
+    cols = ["frequency", "angle_of_attack", "chord_length",
+            "velocity", "displacement_thickness", "sound_pressure"]
+    df = _cached("airfoil.csv",
+                 lambda: pd.read_csv(f"{UCI}/00291/airfoil_self_noise.dat",
+                                     sep=r"\s+", names=cols))
+    return df.drop(columns=["sound_pressure"]), df["sound_pressure"]
+
+
+def _load_autompg():
+    cols = ["mpg", "cylinders", "displacement", "horsepower", "weight",
+            "acceleration", "model_year", "origin", "car_name"]
+    df = _cached("autompg.csv",
+                 lambda: pd.read_csv(f"{UCI}/auto-mpg/auto-mpg.data",
+                                     sep=r"\s+", names=cols, na_values="?"))
+    df = df.drop(columns=["car_name"])
+    return df.drop(columns=["mpg"]), df["mpg"]
+
+
 REMOTE_DATASETS = {
+    "airfoil": _load_airfoil,    # 1,503 rows
+    "autompg": _load_autompg,    # 398 rows, has NaNs
     "concrete": _load_concrete,   # 1,030 rows
     "abalone": _load_abalone,     # 4,177 rows
     "wine": _load_wine,           # 6,497 rows

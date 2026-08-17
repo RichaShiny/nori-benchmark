@@ -79,17 +79,47 @@ Largest context size tested (4,872 rows) and another noisy target (human taste
 ratings). Ridge collapsing to 0.26 while trees held ~0.44-0.49 shows real nonlinear
 signal; Nori beat the tree ensembles anyway, +0.051 over the best.
 
+## Test 7 — Airfoil self-noise (1,503 rows, 5 features): strongly nonlinear physics data
+
+| Model | R2 | MAE | Predict time |
+|---|---|---|---|
+| **Nori V1** | **0.9842** | **0.556** | 33.8s |
+| RandomForest (300 trees) | 0.9318 | 1.319 | <0.1s |
+| HistGradientBoosting | 0.9262 | 1.334 | <0.1s |
+| Ridge | 0.4845 | 3.926 | <0.1s |
+
+The most decisive result in the suite. Ridge collapsing to 0.48 shows strongly
+nonlinear signal; trees handled it well (0.93), and Nori still eliminated 77% of the
+best baseline's residual error (unexplained variance 6.8% down to 1.6%), with less
+than half the MAE.
+
+## Test 8 — Auto MPG (398 rows, native missing values): NaN handling
+
+| Model | R2 | MAE | Predict time |
+|---|---|---|---|
+| **Nori V1** | **0.9181** | **1.589** | 8.4s |
+| HistGradientBoosting | 0.8903 | TBD | <0.1s |
+| RandomForest (300 trees) | 0.8882 | TBD | <0.1s |
+| Ridge | failed (cannot accept NaN input) | | |
+
+NaNs passed straight through with no imputation. Nori and both tree models handled
+them natively (modern sklearn RandomForest accepts NaNs); Ridge failed as expected,
+recorded as NaN by the runner's per-model exception handling.
+
 ## Takeaways
 
-Across six tests, Nori won every contested matchup (Tests 1, 2, 4, 5, 6), from 331
+Across eight tests, Nori won every contested matchup (Tests 1, 2, 4-8), from ~300
 to 4,872 context rows:
 
 - **The noisier the data, the bigger Nori's edge.** Its two largest margins came on
   noisy targets: abalone (+0.063 over a baseline noise floor where Ridge matched
   RandomForest) and diabetes (+13% relative). On wine, another noisy target with
   clearly nonlinear signal, it beat tree ensembles by +0.051.
-- **Clean data is no refuge for baselines either:** on concrete, a smooth
-  physics-driven dataset where tree ensembles excel, Nori still won 0.952 vs 0.921.
+- **Clean data is no refuge for baselines either:** on concrete (0.952 vs 0.921)
+  and especially airfoil, where against trees already at 0.93 on strongly nonlinear
+  physics data, Nori hit 0.984, eliminating 77% of the residual error.
+- **Native NaN handling works as advertised** (Test 8): missing values passed
+  through with no imputation, and Nori still won.
 - **Data efficiency (Tests 2-3):** Nori with 3,000 rows (0.821) nearly matches
   HistGradientBoosting with 15,000 rows (0.841), roughly a 5x data equivalent.
 - **At scale, gradient boosting presumably retakes the lead** (Test 3's 15k-row run
