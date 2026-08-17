@@ -54,7 +54,17 @@ are typically strongest. Nori's margin over HGB (+0.031) exceeded its diabetes m
 
 ## Test 5 — Abalone (4,177 rows, incl. categorical feature): mid-size regime
 
-Results pending.
+| Model | R2 | MAE | Predict time |
+|---|---|---|---|
+| **Nori V1** | **0.6000** | **1.439** | 172.9s |
+| RandomForest (300 trees) | 0.5367 | 1.551 | <0.1s |
+| HistGradientBoosting | 0.5336 | 1.527 | <0.1s |
+| Ridge | 0.5303 | 1.609 | <0.1s |
+
+The baselines were statistically tied (0.530-0.537), a classic noise-floor profile
+where even linear regression matches tree ensembles. Nori broke through it by +0.063
+R2 (+12% relative), its largest margin yet, on a dataset with an encoded categorical
+feature.
 
 ## Test 6 — Wine quality (6,497 rows): near the crossover boundary
 
