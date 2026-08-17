@@ -1,3 +1,2 @@
 dataset,HistGradientBoosting,NoriV1,RandomForest,Ridge
-abalone,0.5336,0.6,0.5367,0.5303
-wine,0.4412,0.5427,0.4917,0.2613
+treecensus,0.5072,0.5692,0.4825,0.195

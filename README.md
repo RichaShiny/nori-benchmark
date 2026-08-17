@@ -106,10 +106,28 @@ NaNs passed straight through with no imputation. Nori and both tree models handl
 them natively (modern sklearn RandomForest accepts NaNs); Ridge failed as expected,
 recorded as NaN by the runner's per-model exception handling.
 
+## Test 9 — NYC Street Tree Census (~20k trees, 16 features): self-assembled real-world data
+
+Predicting trunk diameter (`tree_dbh`) from species, health, stewardship, borough,
+and curb position. Data pulled directly from NYC Open Data (2015 Street Tree Census,
+Socrata API), filtered to living trees, categoricals integer-encoded, 4,000-row sample.
+
+| Model | R2 | MAE | Predict time |
+|---|---|---|---|
+| **Nori V1** | **0.5692** | **3.511** | 230.6s |
+| HistGradientBoosting | 0.5072 | 3.898 | <0.1s |
+| RandomForest (300 trees) | 0.4825 | 3.890 | <0.1s |
+| Ridge | 0.1950 | 5.413 | <0.1s |
+
+The messiest, least curated dataset in the suite: 128 species, missing-value flags,
+mixed categorical encoding, assembled from a raw municipal API rather than a benchmark
+repository. Nori won by +0.062 over the best baseline, the same margin it posts on
+curated noisy datasets, confirming the pattern holds on genuinely wild data.
+
 ## Takeaways
 
-Across eight tests, Nori won every contested matchup (Tests 1, 2, 4-8), from ~300
-to 4,872 context rows:
+Across nine tests on eight datasets, Nori won every contested matchup, from ~300
+to 4,872 context rows, including one dataset assembled directly from a raw municipal API:
 
 - **The noisier the data, the bigger Nori's edge.** Its two largest margins came on
   noisy targets: abalone (+0.063 over a baseline noise floor where Ridge matched

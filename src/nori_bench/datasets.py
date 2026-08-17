@@ -8,6 +8,7 @@ DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
 # name -> (csv filename, target column)
 CSV_DATASETS = {
+    "treecensus": ("treecensus.csv", "tree_dbh"),
     # "my_dataset": ("my_dataset.csv", "target"),
 }
 
