@@ -1,0 +1,7 @@
+# On CPU-only Linux/Windows, install torch first to avoid the 3GB CUDA bundle:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+# On Mac or GPU machines, plain install is fine.
+synthefy-nori
+scikit-learn>=1.4
+pandas>=2.0
+numpy>=2.0
