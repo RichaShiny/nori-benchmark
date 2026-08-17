@@ -38,6 +38,10 @@ def main():
 
     RESULTS_DIR.mkdir(exist_ok=True)
     results.to_csv(RESULTS_DIR / "results.csv", index=False)
+    # also save per-dataset copies that accumulate across runs
+    for ds in results["dataset"].unique():
+        results[results["dataset"] == ds].to_csv(
+            RESULTS_DIR / f"results_{ds}.csv", index=False)
 
     pivot = summarize(results)
     pivot.to_csv(RESULTS_DIR / "r2_by_model.csv")
