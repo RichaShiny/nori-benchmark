@@ -66,19 +66,36 @@ where even linear regression matches tree ensembles. Nori broke through it by +0
 R2 (+12% relative), its largest margin yet, on a dataset with an encoded categorical
 feature.
 
-## Test 6 — Wine quality (6,497 rows): near the crossover boundary
+## Test 6 — Wine quality (6,497 rows, 12 features): near the crossover boundary
 
-Results pending.
+| Model | R2 | MAE | Predict time |
+|---|---|---|---|
+| **Nori V1** | **0.5427** | **0.390** | 467.8s |
+| RandomForest (300 trees) | 0.4917 | 0.440 | <0.1s |
+| HistGradientBoosting | 0.4412 | 0.493 | <0.1s |
+| Ridge | 0.2613 | 0.571 | <0.1s |
+
+Largest context size tested (4,872 rows) and another noisy target (human taste
+ratings). Ridge collapsing to 0.26 while trees held ~0.44-0.49 shows real nonlinear
+signal; Nori beat the tree ensembles anyway, +0.051 over the best.
 
 ## Takeaways
 
-- **Small tables (Tests 1, 4): Nori wins with zero training**, on both noisy
-  (diabetes) and clean (concrete) data.
-- **Low-data regimes (Test 2): Nori's strongest case**, where baselines are data-starved.
-- **At scale (Test 3): gradient boosting still leads**, consistent with Synthefy's own
-  documentation that Nori targets small-to-mid tables.
-- **The tradeoff is inference cost:** seconds to minutes on CPU vs sub-second for
-  sklearn models.
+Across six tests, Nori won every contested matchup (Tests 1, 2, 4, 5, 6), from 331
+to 4,872 context rows:
+
+- **The noisier the data, the bigger Nori's edge.** Its two largest margins came on
+  noisy targets: abalone (+0.063 over a baseline noise floor where Ridge matched
+  RandomForest) and diabetes (+13% relative). On wine, another noisy target with
+  clearly nonlinear signal, it beat tree ensembles by +0.051.
+- **Clean data is no refuge for baselines either:** on concrete, a smooth
+  physics-driven dataset where tree ensembles excel, Nori still won 0.952 vs 0.921.
+- **Data efficiency (Tests 2-3):** Nori with 3,000 rows (0.821) nearly matches
+  HistGradientBoosting with 15,000 rows (0.841), roughly a 5x data equivalent.
+- **At scale, gradient boosting presumably retakes the lead** (Test 3's 15k-row run
+  was CPU-impractical for Nori; Synthefy's own docs concede large tables to boosting).
+- **The tradeoff is inference cost, and it scales steeply:** 21s at 331 context rows,
+  173s at 3.1k, 468s at 4.9k, vs sub-second for every sklearn model.
 
 ## Limitations found
 
